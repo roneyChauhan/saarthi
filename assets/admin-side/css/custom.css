@@ -1,0 +1,26 @@
+/* your styles go here */
+
+.uploaded_vehicle_photo .vehicle_photo_list img {
+    width: 100%;
+    height: 110px;
+    margin: 0 auto;
+    margin-bottom: 8px;
+    object-fit: contain;
+}
+
+.uploaded_vehicle_photo .vehicle_photo_list {
+    text-align: center;
+    border: 1px solid #d3d3d3;
+    width: 90px !important;
+    padding: 5px;
+    float: left;
+    margin-right: 16px;
+    margin-bottom: 15px;
+}
+
+label.error {
+    color: #d81111 !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    margin-left: 1px  !important;
+}

@@ -1,0 +1,34 @@
+* Remaining Points *
+
++ seating capacity input box.
++ Contact Us Working from Contact us With email.
++ Send email for Inquiry to admin side and listing of all inquiry in admin side.
++ Need to add link on booking time and registration time for "I Agree" checkbox.
++ Need to send forgot password email to user for get password reset link to regenrate new password.
+- Need to change some design of booking history table as per our theam.
+- Need to check date-picker for mobile responsive not working proper.
+	- need to try new date-picker for mobile responsive.
+- Total Price :- Need to add Price calculation popup.
+
+- SMS verification for registration side.
+- SMS verification for cab booking time.
+
+- Add vehicle type at time of add vehicle from admin side.
+- Add vehicle Category at time of add vehicle from admin side.
+- make filter from car search page as per.
+	- vehicle type 
+	- vehicle Category
+- Need to working for "Sitemap" link.
+
+- cancel booking functionality
+	- Give user to ability to send cancellation request with valid reason within valid time of gape from booking.
+	- Give ability to admin user to approve or reject And  refund money to user for their cancellation amount.
+
+- Give reminder to user about their booking date is on next day for be ready to go for trip.
+- Question 
+	Same car booking on same date allowed or not ?
+	- if Not allowed then need to add some restriction if there is limited car for that root.
+	- if allowed then no need to do any thing its working fine.
+	
+
+ALTER TABLE `bharat_inquiry` ADD `phone` VARCHAR(255) NULL DEFAULT NULL AFTER `email`;	
