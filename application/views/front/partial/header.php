@@ -64,7 +64,7 @@
                                     <a href="<?php echo base_url() . "our-services" ?>">Services</a>
                                 </li>
                                 <li>
-                                    <a href="<?php echo base_url() . "car/search" ?>">Our Fleets</a>
+                                    <a href="<?php echo base_url() . "car/lists" ?>">Our Fleets</a>
                                 </li>
                                 <li>
                                     <a href="<?php echo base_url() . "contact-us" ?>">Contact Us</a>

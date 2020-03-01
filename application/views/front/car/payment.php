@@ -53,7 +53,18 @@
                                 <h3>OR</h3>
                             </div>
                             <div class="col-md-12 col-sm-12">
-                                <!--<a href="confirm-booking.html" class="back-btn"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Go Back</a>-->
+                                <div class="payment-field">
+                                    <label for="full_paytm">
+                                        <input type="radio" checked name="payment_method" value="0" id="full_paytm">Full Payment
+                                    </label>
+                                </div>
+                                <div class="payment-field">
+                                    <label for="part_paytm">
+                                        <input type="radio" name="payment_method" value="1" id="part_paytm">Partial payment
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
                                 <button type="submit" class="book-btn">Book Now <i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>
                             </div>
                         </form>

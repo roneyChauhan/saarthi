@@ -7,6 +7,7 @@ class Car extends MY_Controller {
         parent::__construct();
         $this->is_logined       = $this->get_authorized_user();
         $this->loginUser        = $this->getLoginUser();
+        $this->perPage          = 5;
         $this->load->library("paytm_lib");
         $this->load->library("whats_app");
     }
@@ -35,7 +36,7 @@ class Car extends MY_Controller {
         }
 
         $config                 = initPagination();
-        $per_page               = 5;
+        $per_page               = $this->perPage;
         $config['base_url']     = base_url() . 'car/search';
         $config['total_rows']   = $this->vehicle_model->vehicle_search($filter, true);
         $config['per_page']     = $per_page;
@@ -63,7 +64,7 @@ class Car extends MY_Controller {
         $this->load->library('pagination');
 
         $config                 = initPagination();
-        $per_page               = 5;
+        $per_page               = $this->perPage;
         $config['base_url']     = base_url() . 'car/lists';
         $config['total_rows']   = $this->vehicle_model->vehicle_search($filter, true);
         $config['per_page']     = $per_page;
@@ -360,6 +361,7 @@ class Car extends MY_Controller {
             $this->form_validation->set_rules('car_id', 'Car', 'required|trim');
             if ($this->form_validation->run() == true) {
                 $car_id             = $this->input->post('car_id');
+                $method             = $this->input->post('payment_method');
                 $tripSession        = $this->getSession("tripSession");
                 $userBookingSession = $this->getSession("userBookingSession");
                 if($car_id != "" && !empty($tripSession) && !empty($userBookingSession) ){
@@ -415,9 +417,16 @@ class Car extends MY_Controller {
                                                     "vehical_id"        => $decrypt_id,
                                                     "transaction_id"    => time(),
                                                     "total_amount"      => $total_amount,
+                                                    "paid_amount"       => $total_amount,
                                                     "status"            => "Pending",
+                                                    "method"            => 0,
                                                     "created_date"      => date("Y-m-d H:i:s"),
-                                                ); 
+                                                );
+                                if ($method == 1) {
+                                    $booking_data['method']         = 1;
+                                    $booking_data['paid_amount']    = $total_amount / 2;
+                                    $total_amount                   = $total_amount / 2;
+                                }
                                 $booking_id = $this->booking_model->insert($booking_data);
                                 if($booking_id > 0) {
                                     $paymentConfirmSession   = array(
@@ -441,7 +450,7 @@ class Car extends MY_Controller {
                                         $this->paytm_lib->add_field('CALLBACK_URL', $returnURL);
                                         $this->paytm_lib->add_field('ORDER_ID', $booking_id);
                                         $this->paytm_lib->add_field('CUST_ID', $user_id);
-                                        $this->paytm_lib->add_field('TXN_AMOUNT', 10);// Payment amount
+                                        $this->paytm_lib->add_field('TXN_AMOUNT', $total_amount);// $total_amount Payment amount
                                         $this->paytm_lib->add_field('MSISDN', $userBookingSession["phone"]);
                                         $this->paytm_lib->paytm_auto_form();
                                     } else {
@@ -480,7 +489,7 @@ class Car extends MY_Controller {
 
     function payment_confirmation() {
         $payment_response   = $_REQUEST;
-        //p($payment_response);
+        p($payment_response);
         if(isset($payment_response['STATUS'])) {
             $paymentConfirmSession  = $this->getSession("paymentConfirmSession");
             if(!empty($paymentConfirmSession) && isset($paymentConfirmSession["booking_id"])) {
