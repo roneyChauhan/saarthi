@@ -2,6 +2,9 @@ $(document).ready(function() {
 
     loadBooking();
 
+    $(document).on('click', '.send_driver_details', function(e) {
+        $('#driver_modal').modal('show');
+    });
     $(document).on('click', '.open-modal', function(e){
         e.preventDefault();
         var id = "";
@@ -72,6 +75,7 @@ function loadBooking() {
             },
             //"order": [[1, 'desc']],
             "columns": [
+                { "data": "reference_id" },
                 { "data": "username" },
                 { "data": "trip_date" },
                 { "data": "trip_type" },

@@ -21,13 +21,33 @@
                                         <td height="25">&nbsp;</td>
                                     </tr>
                                     <tr>
-                                        <td height="25" style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px; padding-left:10px;">Your Trip is start today form saarthicab.com, Here detail is given below.</td>
+                                        <td height="25" style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px; padding-left:10px;">Driver detail is given below for your trip form saarthicab.com.</td>
                                     </tr>
+                                    <tr>
+                                        <td height="25">&nbsp;</td>
+                                    </tr>
+                                    <?php if(isset($message) && ($message != "") ) { ?>
+                                        <tr>
+                                            <td height="25" style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px; padding-left:10px;"><?php echo $message; ?></td>
+                                        </tr>
+                                    <?php } ?>
                                     <tr>
                                         <td height="25">&nbsp;</td>
                                     </tr>
                                     <tr>
                                         <table width="100%" cellspacing="0" cellpadding="0" style="max-width: 560px; margin: auto; border: 1px solid #CACACA;">
+                                            <tr>
+                                                <th height="25" style="border: 1px solid #CACACA; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px; padding-left:10px;">Driver Name</th>
+                                                <td height="25" style="border: 1px solid #CACACA; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px; padding-left:10px;"><?php echo (isset($driver_name) && ($driver_name != "") ) ? $driver_name : '' ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th height="25" style="border: 1px solid #CACACA; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px; padding-left:10px;">Driver Phone No</th>
+                                                <td height="25" style="border: 1px solid #CACACA; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px; padding-left:10px;"><?php echo (isset($phone_no) && ($phone_no != "") ) ? $phone_no : '' ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th height="25" style="border: 1px solid #CACACA; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px; padding-left:10px;">Car No</th>
+                                                <td height="25" style="border: 1px solid #CACACA; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px; padding-left:10px;"><?php echo (isset($car_no) && ($car_no != "") ) ? $car_no : '' ?></td>
+                                            </tr>
                                             <tr>
                                                 <th height="25" style="border: 1px solid #CACACA; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px; padding-left:10px;">Journey Type</th>
                                                 <td height="25" style="border: 1px solid #CACACA; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px; padding-left:10px;"><?php echo (isset($trip_details->service_type) && ($trip_details->service_type == 1) ) ? "Two Way" : 'One Way' ?></td>

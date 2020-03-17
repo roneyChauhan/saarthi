@@ -24,6 +24,7 @@ class Booking extends MY_Controller {
                 //$filter['where']= array("user_id" => $this->loginUser["id"]);
                 $columnArray    = array(
                                     '',
+                                    '',
                                     'pickup_date',
                                     'service_type',
                                     '',
@@ -69,8 +70,9 @@ class Booking extends MY_Controller {
                 $query              = $this->booking_model->get_rows($filter);
                 $admin              = array();
                 foreach ($query as $row) {
-                    //p($row);
+//                    p($row);
                     $row_data                   = array();
+                    $row_data['reference_id']   = $row->reference_id;
                     $row_data['username']       = $row->first_name . " " . $row->last_name;
                     $row_data['id']             = $row->id;
                     $row_data['trip_date']      = showDate($row->pickup_date);
@@ -109,6 +111,7 @@ class Booking extends MY_Controller {
                     } else if ($row->cancel_request == 2) {
                         $action = '<a href="javascript:;" data-booking_id="'.encryptIt($row->id).'" class="btn btn-sm btn-danger mr-1">Canceled</a>';
                     }
+                    $action .= '<a href="' . admin_url() . 'booking/view/'.encryptIt($row->id).'" class="btn btn-sm btn-info mr-1">View</a>';
                     $row_data['trip_status']    = $isTripComplete;
                     $row_data['action']         = $action;
                     $admin[]                    = $row_data;
@@ -134,6 +137,48 @@ class Booking extends MY_Controller {
                                                 );
 
             $this->template->view('admin/booking/index', $data);
+        } else {
+            redirect(admin_url());
+        }
+    }
+
+    public function view($booking_id = "") {
+        if ($this->is_logined) {
+            if($booking_id != "") {
+                $filter["where"]        = array("bharat_booking.id" => decreptIt($booking_id));
+                $filter["select"]       = array("bharat_booking.*", 
+                                            "user.first_name", 
+                                            "user.last_name",
+                                            "user.phone",
+                                            "user.email",
+                                            "bd.service_type", 
+                                            "c_pick.city_name as pick_city", 
+                                            "s_pick.state as pick_state ",
+                                            "c_drop.city_name as drop_city", 
+                                            "s_drop.state as drop_state", 
+                                            "bd.trip_location", 
+                                            "bd.drop_location",
+                                            "bd.pickup_date", "bd.pickup_time",
+                                            "bd.trip_days");
+                $filter["join"]         = array(
+                                            array('table' => 'bharat_booking_detail as bd', 'condition' => "bd.booking_id = bharat_booking.id", "type" => "left"),
+                                            array('table' => 'bharat_user as user', 'condition' => "user.id = bharat_booking.user_id", "type" => "left"),
+                                            array('table' => 'bharat_cities as c_pick', 'condition' => "c_pick.id = bd.trip_location", "type" => "left"),
+                                            array('table' => 'bharat_state as s_pick', 'condition' => "s_pick.id = c_pick.state_code", "type" => "left"),
+                                            array('table' => 'bharat_cities as c_drop', 'condition' => "c_drop.id = bd.drop_location", "type" => "left"),
+                                            array('table' => 'bharat_state as s_drop', 'condition' => "s_drop.id = c_drop.state_code", "type" => "left")
+                                        );
+                $filter["groupby"]      = array("field" => "bharat_booking.id");
+                $filter["row"]          = 1;
+                $data["trip_details"]   = $this->booking_model->get_rows($filter);
+                $data['breadcrumbs']['page_title']  = "Manage Booking";
+                $data['breadcrumbs']['data']        = array(
+                                                        array('name' => 'Manage Booking', 'link' => admin_url().'booking')
+                                                    );
+                $this->template->view('admin/booking/view', $data);
+            } else {
+                redirect(admin_url()."booking");
+            }
         } else {
             redirect(admin_url());
         }
@@ -188,6 +233,77 @@ class Booking extends MY_Controller {
             redirect(admin_url());
         }
     }
+
+    public function driver_mail() {
+        if ($this->input->server('REQUEST_METHOD') == 'POST') {
+            $this->form_validation->set_rules('booking_id', 'booking_id', 'required|trim');
+            $this->form_validation->set_rules('driver_name', 'driver_name', 'required|trim');
+            $this->form_validation->set_rules('phone_no', 'phone_no', 'required|trim');
+            $this->form_validation->set_rules('car_no', 'car_no', 'required|trim');
+            if ($this->form_validation->run() == true) {
+                $booking_id     = $this->input->post('booking_id');
+                $driver_name    = $this->input->post('driver_name');
+                $phone_no       = $this->input->post('phone_no');
+                $car_no         = $this->input->post('car_no');
+                $message        = $this->input->post('message');
+                $subject        = ($this->input->post('subject') != "") ? $this->input->post('subject') : "Driver Details aginst your trip booking";
+
+                $filter["where"]            = array("bharat_booking.id" => decreptIt($booking_id));
+                $filter["select"]           = array("bharat_booking.*", 
+                                                "user.first_name", 
+                                                "user.last_name",
+                                                "user.phone",
+                                                "user.email",
+                                                "bd.service_type", 
+                                                "c_pick.city_name as pick_city", 
+                                                "s_pick.state as pick_state ",
+                                                "c_drop.city_name as drop_city", 
+                                                "s_drop.state as drop_state", 
+                                                "bd.trip_location", 
+                                                "bd.drop_location",
+                                                "bd.pickup_date", "bd.pickup_time",
+                                                "bd.trip_days");
+                $filter["join"]             = array(
+                                                array('table' => 'bharat_booking_detail as bd', 'condition' => "bd.booking_id = bharat_booking.id", "type" => "left"),
+                                                array('table' => 'bharat_user as user', 'condition' => "user.id = bharat_booking.user_id", "type" => "left"),
+                                                array('table' => 'bharat_cities as c_pick', 'condition' => "c_pick.id = bd.trip_location", "type" => "left"),
+                                                array('table' => 'bharat_state as s_pick', 'condition' => "s_pick.id = c_pick.state_code", "type" => "left"),
+                                                array('table' => 'bharat_cities as c_drop', 'condition' => "c_drop.id = bd.drop_location", "type" => "left"),
+                                                array('table' => 'bharat_state as s_drop', 'condition' => "s_drop.id = c_drop.state_code", "type" => "left")
+                                            );
+                $filter["groupby"]          = array("field" => "bharat_booking.id");
+                $filter["row"]              = 1;
+                $trip_details               = $this->booking_model->get_rows($filter);
+                if (! empty($trip_details)) {
+//                    $to_email   = $trip_details->email;
+                    $to_email   = "inquiry@saarthicab.com";
+                    $subject    = $subject . ' - Saarthicab.com';
+                    $headers    = 'MIME-Version: 1.0' . "\r\n";
+                    $headers    .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";//        
+                    $headers    .= 'From:noreply@saarthicab.com';
+
+                    $viewData['driver_name']    = $driver_name;
+                    $viewData['phone_no']       = $phone_no;
+                    $viewData['car_no']         = $car_no;
+                    $viewData['subject']        = $subject;
+                    $viewData['message']        = $message;
+                    $viewData['trip_details']   = $trip_details;
+                    $message                    = $this->load->view('front/email/driver_details', $viewData, true);
+                    mail($to_email,$subject,$message,$headers);
+                    $this->session->set_flashdata('success', 'Driver detail mail send successfully');
+                } else {
+                    $this->session->set_flashdata('error', 'Booking not found');
+                }
+                redirect(admin_url().'booking/view/'. $booking_id);
+            } else {
+                $this->session->set_flashdata('error', 'Invalid Method.');
+                redirect(admin_url().'booking');
+            }
+        } else {
+            $this->session->set_flashdata('error', 'Invalid Method.');
+            redirect(base_url());
+        }
+    }    
     
 }
 ?>

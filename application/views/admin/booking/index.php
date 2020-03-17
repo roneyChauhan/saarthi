@@ -8,6 +8,7 @@
                             <table id="booking_table" class="table table-striped table-bordered zero-configuration">
                                 <thead>
                                     <tr>
+                                        <th><i class="icon_profile"></i> Reference Id</th>
                                         <th><i class="icon_profile"></i> User Name</th>
                                         <th><i class="icon_profile"></i> Trip Date</th>
                                         <th><i class="icon_calendar"></i> Trip Type</th>
