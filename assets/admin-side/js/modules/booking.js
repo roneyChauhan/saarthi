@@ -5,6 +5,9 @@ $(document).ready(function() {
     $(document).on('click', '.send_driver_details', function(e) {
         $('#driver_modal').modal('show');
     });
+    $(document).on('click', '.send_payment_link', function(e) {
+        $('#payment_modal').modal('show');
+    });
     $(document).on('click', '.open-modal', function(e){
         e.preventDefault();
         var id = "";

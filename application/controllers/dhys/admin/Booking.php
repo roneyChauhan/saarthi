@@ -303,7 +303,62 @@ class Booking extends MY_Controller {
             $this->session->set_flashdata('error', 'Invalid Method.');
             redirect(base_url());
         }
-    }    
-    
+    }
+
+    public function send_payment_link() {
+        if ($this->input->server('REQUEST_METHOD') == 'POST') {
+            $booking_id     = $this->input->post('booking_id');
+            $message        = $this->input->post('message');
+            $subject        = ($this->input->post('subject') != "") ? $this->input->post('subject') : "Payment reminder";
+
+            $filter["where"]            = array("bharat_booking.id" => decreptIt($booking_id));
+            $filter["select"]           = array("bharat_booking.*", 
+                                            "user.first_name", 
+                                            "user.last_name",
+                                            "user.phone",
+                                            "user.email",
+                                            "bd.service_type", 
+                                            "c_pick.city_name as pick_city", 
+                                            "s_pick.state as pick_state ",
+                                            "c_drop.city_name as drop_city", 
+                                            "s_drop.state as drop_state", 
+                                            "bd.trip_location", 
+                                            "bd.drop_location",
+                                            "bd.pickup_date", "bd.pickup_time",
+                                            "bd.trip_days");
+            $filter["join"]             = array(
+                                            array('table' => 'bharat_booking_detail as bd', 'condition' => "bd.booking_id = bharat_booking.id", "type" => "left"),
+                                            array('table' => 'bharat_user as user', 'condition' => "user.id = bharat_booking.user_id", "type" => "left"),
+                                            array('table' => 'bharat_cities as c_pick', 'condition' => "c_pick.id = bd.trip_location", "type" => "left"),
+                                            array('table' => 'bharat_state as s_pick', 'condition' => "s_pick.id = c_pick.state_code", "type" => "left"),
+                                            array('table' => 'bharat_cities as c_drop', 'condition' => "c_drop.id = bd.drop_location", "type" => "left"),
+                                            array('table' => 'bharat_state as s_drop', 'condition' => "s_drop.id = c_drop.state_code", "type" => "left")
+                                        );
+            $filter["groupby"]          = array("field" => "bharat_booking.id");
+            $filter["row"]              = 1;
+            $trip_details               = $this->booking_model->get_rows($filter);
+            if (! empty($trip_details)) {
+//                    $to_email   = $trip_details->email;
+                $to_email   = "ca.kishanchavda78@gmail.com";
+                $subject    = $subject . ' - Saarthicab.com';
+                $headers    = 'MIME-Version: 1.0' . "\r\n";
+                $headers    .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";//        
+                $headers    .= 'From:noreply@saarthicab.com';
+
+                $viewData['subject']        = $subject;
+                $viewData['message']        = $message;
+                $viewData['trip_details']   = $trip_details;
+                $message                    = $this->load->view('front/email/payment_reminder', $viewData, true);
+                mail($to_email,$subject,$message,$headers);
+                $this->session->set_flashdata('success', 'Payment reminder mail send successfully');
+            } else {
+                $this->session->set_flashdata('error', 'Booking not found');
+            }
+            redirect(admin_url().'booking/view/'. $booking_id);
+        } else {
+            $this->session->set_flashdata('error', 'Invalid Method.');
+            redirect(base_url());
+        }
+    }
 }
 ?>

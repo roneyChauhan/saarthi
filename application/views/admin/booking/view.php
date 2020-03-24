@@ -96,7 +96,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <button type="button" class="btn btn-info send_payment_reminder"> Payment Reminder</button>
+                                        <button type="button" class="btn btn-info send_payment_link"> Payment Reminder</button>
                                     </div>
                                 </div>
                             <?php } ?>
@@ -137,6 +137,36 @@
                             <label for="email">Car No</label>
                             <input type="text" name="car_no" id="car_no" class="form-control ">
                         </div>
+                        <div class="form-group" >
+                            <label for="message">Mail Subject</label>
+                            <input type="text" id="subject" name="subject" class="form-control" >
+                        </div>
+                        <div class="form-group" >
+                            <label for="message">Message</label>
+                            <textarea type="text" id="message" name="message" class="md-textarea form-control" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button class="btn btn-primary" type="submit" >Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade text-left" id="payment_modal" tabindex="-1" role="dialog" aria-labelledby="basicModalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="basicModalLabel3">Send Driver Details</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="driver_from" id="driver_from" action="<?php echo admin_url().'booking/send_payment_link'; ?>" method="post" >
+                    <input type="hidden" name="booking_id" value="<?php echo isset($trip_details->id) ? encreptIt($trip_details->id) : '' ?>">
+                    <div class="modal-body">
                         <div class="form-group" >
                             <label for="message">Mail Subject</label>
                             <input type="text" id="subject" name="subject" class="form-control" >
